@@ -2,7 +2,19 @@
 #include <math.h>
 #include "List.h"
 
-int chtbl_init(CHTbl **htbl, int (*hash)(CHTbl *htbl,void *key1), int (*match)(void *key1, void *key2),
+static int chtbl_init(CHTbl **htbl, int (*hash)(CHTbl *htbl,void *key1), int (*match)(void *key1, void *key2),
+	void (*destroy)(CHTbl *htbl), int (*remove)(CHTbl *htbl, void *key1), int (*insert)(CHTbl *htbl, void *key1), int (*get_size)(void *data),
+	int (*search)(struct CHTbl_ *data, void *key1), int size);
+static int chtbl_hash(CHTbl *htbl, void *key1);
+static int chtbl_insert(CHTbl *htbl, void *key1);
+static int chtbl_remove(CHTbl *htbl, void *key1);
+static void chtbl_destroy(CHTbl *htbl);
+static int chtbl_get_size(CHTbl *htbl);
+static int chtbl_search(CHTbl *htbl, void *key1);
+
+
+
+static int chtbl_init(CHTbl **htbl, int (*hash)(CHTbl *htbl,void *key1), int (*match)(void *key1, void *key2),
 	void (*destroy)(CHTbl *htbl), int (*remove)(CHTbl *htbl, void *key1), int (*insert)(CHTbl *htbl, void *key1), int (*get_size)(void *data),
 	int (*search)(struct CHTbl_ *data, void *key1), size) {
 
@@ -28,7 +40,7 @@ int chtbl_init(CHTbl **htbl, int (*hash)(CHTbl *htbl,void *key1), int (*match)(v
 	return 0;
 }
 
-int chtbl_hash(CHTbl *htbl, void *key1) {
+static int chtbl_hash(CHTbl *htbl, void *key1) {
 	
 	int *ptr,number,htblIndex;
 	double decFrac;
@@ -42,7 +54,7 @@ int chtbl_hash(CHTbl *htbl, void *key1) {
 	return htblIndex;
 }
 
-int chtbl_insert(CHTbl *htbl, void *key1) {
+static int chtbl_insert(CHTbl *htbl, void *key1) {
 	
 	int index;
 	CList *list;
@@ -75,7 +87,7 @@ int chtbl_insert(CHTbl *htbl, void *key1) {
 	
 }
 
-int chtbl_remove(CHTbl *htbl, void *key1) {
+static int chtbl_remove(CHTbl *htbl, void *key1) {
 	
 	
 	if(htbl->search(htbl,key1) != 0)
@@ -104,7 +116,7 @@ int chtbl_remove(CHTbl *htbl, void *key1) {
 	
 }
 
-void chtbl_destroy(CHTbl *htbl) {
+static void chtbl_destroy(CHTbl *htbl) {
 	
 	int i;
 	CList *list;
@@ -124,13 +136,13 @@ void chtbl_destroy(CHTbl *htbl) {
 
 }
 
-int chtbl_get_size(CHTbl *htbl) {
+static int chtbl_get_size(CHTbl *htbl) {
 	
 	return htbl->packets;
 	
 }
 
-int chtbl_search(CHTbl *htbl, void *key1) {
+static int chtbl_search(CHTbl *htbl, void *key1) {
 	
 	int index;
 	LstElem *mvptr;
